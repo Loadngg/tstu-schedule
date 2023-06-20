@@ -21,8 +21,10 @@ class Parser:
 
         print("---LOAD END---")
 
-    def search(self, search_filter: str) -> None:
+    def search(self, search_filter: str) -> List[str]:
         print("---SEARCH START---")
+
+        result: List[str] = []
 
         for book in self.books:
             for sheet_name in book.get_sheet_names():
@@ -34,12 +36,19 @@ class Parser:
                             row_index = cell.row
                             while sheet.cell(row=row_index, column=1).value is None:
                                 row_index -= 1
-                            print(
-                                remove_extra_whitespaces(sheet.cell(row=row_index, column=1).value),
-                                remove_extra_whitespaces(sheet.cell(row=1, column=cell.column).value),
-                                remove_extra_whitespaces(cell.value)
+
+                            result.append(
+                                ' '.join(
+                                    [
+                                        remove_extra_whitespaces(sheet.cell(row=row_index, column=1).value)[:5],
+                                        remove_extra_whitespaces(sheet.cell(row=1, column=cell.column).value),
+                                        remove_extra_whitespaces(cell.value)
+                                    ]
+                                )
                             )
 
-            print(f"Book {self.books.index(book)} processed\n")
+            print(f"Book {self.books.index(book)} processed")
 
         print("---SEARCH END---")
+
+        return result

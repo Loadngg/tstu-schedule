@@ -1,6 +1,7 @@
 import customtkinter
 import tkinter.filedialog as fd
 from parser import *
+import generator
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
@@ -50,7 +51,8 @@ class Application(customtkinter.CTk):
     def parse_button_event(self) -> None:
         search_filter = self.search_filter.get("0.0", "end").split("\n")[0]
 
-        self.parser.search(search_filter)
+        result = self.parser.search(search_filter)
+        generator.generate(result, search_filter)
 
 
 if __name__ == '__main__':
