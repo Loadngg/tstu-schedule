@@ -1,7 +1,8 @@
 import customtkinter
+from CTkMessagebox import CTkMessagebox
 import tkinter.filedialog as fd
-from parser import *
 import generator
+from parser import *
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
@@ -50,6 +51,9 @@ class Application(customtkinter.CTk):
 
     def parse_button_event(self) -> None:
         search_filter = self.search_filter.get("0.0", "end").split("\n")[0]
+        if search_filter.__len__() == 0:
+            CTkMessagebox(title="Ошибка", message="Вы не ввели фильтр для поиска", icon="cancel")
+            return
 
         result = self.parser.search(search_filter)
         generator.generate(result, search_filter)
