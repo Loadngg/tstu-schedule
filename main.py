@@ -48,7 +48,7 @@ class Application(customtkinter.CTk):
         self.search_button.configure(state="normal")
 
     def parse_button_event(self) -> None:
-        search_filter = self.search_filter.get("0.0", "end")
+        search_filter = self.search_filter.get("0.0", "end").split("\n")[0]
 
         self.parser.search(search_filter)
 
