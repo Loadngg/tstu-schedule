@@ -44,14 +44,14 @@ class Parser:
                                 ' '.join(
                                     [
                                         remove_extra_whitespaces(sheet.cell(row=row_index, column=1).value)[:5],
-                                        remove_extra_whitespaces(sheet.cell(row=1, column=cell.column).value),
-                                        remove_extra_whitespaces(cell.value),
                                         ' '.join(
                                             [
                                                 remove_extra_whitespaces(sheet.cell(row=cell.row, column=2).value),
                                                 remove_extra_whitespaces(sheet.cell(row=cell.row + 1, column=2).value)
                                             ]
-                                        ) if time_column_exist else ''
+                                        ) if time_column_exist else '',
+                                        remove_extra_whitespaces(sheet.cell(row=1, column=cell.column).value),
+                                        remove_extra_whitespaces(cell.value),
                                     ]
                                 )
                             )

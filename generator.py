@@ -28,7 +28,7 @@ def generate(results: List[str], search_filter: str) -> None:
         temp_str = [result[:5], result[6:]]
         if re.search(time_interval_regex, temp_str[1]) is None and re.search(time_regex, temp_str[1]):
             split_string = re.split(time_regex, temp_str[1])
-            split_string[2], split_string[1] = split_string[1], split_string[2]
+            split_string[0], split_string[1] = split_string[1], split_string[0]
             temp_str[1] = ' '.join(split_string)
             temp_str = remove_extra_whitespaces(' '.join(temp_str))
             results[key] = temp_str
