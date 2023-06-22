@@ -1,5 +1,6 @@
 import openpyxl
 from xls2xlsx import XLS2XLSX
+from typing import List
 
 
 def open_xls_as_xlsx(filename: str) -> openpyxl.Workbook:
@@ -9,3 +10,30 @@ def open_xls_as_xlsx(filename: str) -> openpyxl.Workbook:
 
 def remove_extra_whitespaces(string: str) -> str:
     return ' '.join(string.split())
+
+
+def roman_to_int(roman_str: str) -> str:
+    result = 0
+    values = {
+        'I': 1,
+        'V': 5
+    }
+
+    for i in range(len(roman_str) - 1):
+        result = result - values[roman_str[i]] \
+            if values[roman_str[i]] < values[roman_str[i + 1]] \
+            else result + values[roman_str[i]]
+
+    result += values[roman_str[len(roman_str) - 1]]
+
+    return str(result)
+
+
+def sort_key(string: str):
+    split = string[:5].split('.')
+    return split[1], split[0]
+
+
+def join_split_string(temp_str: List[str], split_string: List[str]) -> str:
+    temp_str[1] = ' '.join(split_string)
+    return remove_extra_whitespaces(' '.join(temp_str))
