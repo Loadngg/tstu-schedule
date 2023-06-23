@@ -1,7 +1,7 @@
 import customtkinter
 from CTkMessagebox import CTkMessagebox
 import tkinter.filedialog as fd
-import generator
+from generator import *
 from parser import *
 
 customtkinter.set_appearance_mode("Dark")
@@ -66,6 +66,7 @@ class Application(customtkinter.CTk):
         for search_filter in search_filters:
             general_result.append(self.parser.search(search_filter))
 
+        generator = Generator()
         generator.generate(general_result, search_filters, self.general_file_flag)
 
 

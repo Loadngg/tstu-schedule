@@ -5,7 +5,7 @@ from typing import List
 
 
 class Parser:
-    def __init__(self):
+    def __init__(self) -> None:
         self.books: List[openpyxl.Workbook] = []
 
     def load_files(self, files: tuple) -> None:
