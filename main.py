@@ -13,6 +13,7 @@ class Application(customtkinter.CTk):
         super().__init__()
 
         self.parser = Parser()
+        self.general_file_flag: bool = False
 
         self.title("Парсинг расписания")
         self.geometry(f"{500}x{250}")
@@ -31,7 +32,8 @@ class Application(customtkinter.CTk):
         self.search_filter.bind('<Return>', lambda event: 'break')
         self.search_filter.configure(font=('', 16))
 
-        self.general_file_checkbox = customtkinter.CTkCheckBox(self, text="Вывод в общий файл")
+        self.general_file_checkbox = customtkinter.CTkCheckBox(self, text="Вывод в общий файл",
+                                                               command=self.set_general_file_flag)
         self.general_file_checkbox.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
 
         self.load_button = customtkinter.CTkButton(self, text="Загрузить", command=self.load_button_event)
@@ -40,6 +42,9 @@ class Application(customtkinter.CTk):
         self.search_button = customtkinter.CTkButton(self, text="Поиск", command=self.parse_button_event,
                                                      state="disabled")
         self.search_button.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
+
+    def set_general_file_flag(self) -> None:
+        self.general_file_flag = not self.general_file_flag
 
     def load_button_event(self) -> None:
         files = fd.askopenfilenames()
@@ -51,13 +56,17 @@ class Application(customtkinter.CTk):
         self.search_button.configure(state="normal")
 
     def parse_button_event(self) -> None:
-        search_filter = self.search_filter.get("0.0", "end").split("\n")[0]
-        if search_filter.__len__() == 0:
+        search_filters = self.search_filter.get("0.0", "end").split("\n")[0].split(", ")
+        general_result = []
+
+        if search_filters[0].__len__() == 0:
             CTkMessagebox(title="Ошибка", message="Вы не ввели фильтр для поиска", icon="cancel")
             return
 
-        result = self.parser.search(search_filter)
-        generator.generate(result, search_filter)
+        for search_filter in search_filters:
+            general_result.append(self.parser.search(search_filter))
+
+        generator.generate(general_result, search_filters, self.general_file_flag)
 
 
 if __name__ == '__main__':
