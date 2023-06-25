@@ -1,3 +1,5 @@
+import re
+
 import openpyxl
 from xls2xlsx import XLS2XLSX
 from typing import List
@@ -13,11 +15,16 @@ def remove_extra_whitespaces(string: str) -> str:
 
 
 def roman_to_int(roman_str: str) -> str:
+    stupid_formatting = False
     result = 0
     values = {
         'I': 1,
         'V': 5
     }
+
+    if re.search("пара", roman_str):
+        roman_str = re.split("пара", roman_str)[0]
+        stupid_formatting = True
 
     for i in range(len(roman_str) - 1):
         result = result - values[roman_str[i]] \
@@ -25,6 +32,9 @@ def roman_to_int(roman_str: str) -> str:
             else result + values[roman_str[i]]
 
     result += values[roman_str[len(roman_str) - 1]]
+
+    if stupid_formatting:
+        result = f"{result} пара"
 
     return str(result)
 
