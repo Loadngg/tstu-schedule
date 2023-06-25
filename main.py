@@ -23,14 +23,20 @@ class Application(customtkinter.CTk):
         self.search_frame = customtkinter.CTkFrame(self, width=140, height=70, corner_radius=0)
         self.search_frame.grid(row=0, column=0, sticky="nsew")
         self.search_frame.grid_columnconfigure(1, weight=1)
+        self.search_frame.grid_rowconfigure(1, weight=1)
 
         self.search_label = customtkinter.CTkLabel(self.search_frame, text="Поиск по:", anchor="e")
         self.search_label.grid(row=0, column=0, padx=20, pady=(10, 0))
+        self.search_label.configure(font=('', 14))
 
         self.search_filter = customtkinter.CTkTextbox(self.search_frame, width=20, height=40, wrap="none")
         self.search_filter.grid(row=0, column=1, padx=(0, 20), pady=20, sticky="ew")
         self.search_filter.bind('<Return>', lambda event: 'break')
         self.search_filter.configure(font=('', 16))
+
+        self.info_label = customtkinter.CTkLabel(self.search_frame, text="", anchor="e")
+        self.info_label.grid(row=1, column=0, columnspan=2, padx=20)
+        self.info_label.configure(font=('', 14))
 
         self.general_file_checkbox = customtkinter.CTkCheckBox(self, text="Вывод в общий файл",
                                                                command=self.set_general_file_flag)
@@ -65,6 +71,10 @@ class Application(customtkinter.CTk):
 
         for search_filter in search_filters:
             general_result.append(self.parser.search(search_filter))
+
+        if ''.join(sum(general_result, [])).__len__() == 0:
+            self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(search_filters)}")
+            return
 
         generator = Generator()
         generator.generate(general_result, search_filters, self.general_file_flag)
