@@ -2,11 +2,13 @@ from docx import Document
 from docx.shared import Pt
 from typing import List
 from utils import roman_to_int, join_split_string, sort_key
+from customtkinter import CTkLabel
 import re
 
 
 class Generator:
-    def __init__(self):
+    def __init__(self, info_label: CTkLabel) -> None:
+        self.info_label = info_label
         self.time_interval_regex = r"(\b[0-2]?[0-9].[0-5][0-9]\b-\b[0-2]?[0-9].[0-5][0-9]\b)"
         self.time_regex = r"(\b[0-2]?[0-9].[0-5][0-9]\b)"
 
@@ -53,7 +55,7 @@ class Generator:
             paragraph.add_run(' ' + ' '.join(split_string[2:]))
 
     def generate(self, results: List[List[str]], search_filter: List[str], general_file: bool = False) -> None:
-        print("---GENERATION START---")
+        self.info_label.configure(text="Генерация...")
 
         if general_file:
             doc = self.__create_doc()
@@ -69,4 +71,4 @@ class Generator:
                 self.__output_results(item, doc)
                 doc.save(f"Расписание {search_filter[results.index(item)]}.docx")
 
-        print("---GENERATION END---")
+        self.info_label.configure(text="Генерация завершена")
