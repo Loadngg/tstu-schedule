@@ -59,7 +59,7 @@ class Recording:
         flags_dict = {
             "d": self.data,
             "t": self.time,
-            "p": f"({self.pair_number} пара)",
+            "p": f"({self.pair_number} пара)" if self.pair_number.__len__() != 0 else "",
             "g": self.group,
             "s": self.subject,
             "a": self.auditorium
