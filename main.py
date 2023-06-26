@@ -3,6 +3,7 @@ from CTkMessagebox import CTkMessagebox
 import tkinter.filedialog as fd
 from generator import *
 from parser import *
+from recording import *
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
@@ -30,6 +31,7 @@ class Application(customtkinter.CTk):
         self.search_filter.grid(row=0, column=1, padx=(0, 20), pady=20, sticky="ew")
         self.search_filter.bind('<Return>', lambda event: 'break')
         self.search_filter.configure(font=('', 16))
+        self.search_filter.insert("0.0", "Волков")
 
         self.info_label = customtkinter.CTkLabel(self.search_frame, text="Готовность", anchor="w")
         self.info_label.grid(row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="nw")
@@ -63,21 +65,30 @@ class Application(customtkinter.CTk):
 
     def parse_button_event(self) -> None:
         search_filters = self.search_filter.get("0.0", "end").split("\n")[0].split(", ")
-        general_result = []
+        formatted_results: List[List[Recording]] = []
+        not_founded_filters: List[str] = []
 
         if search_filters[0].__len__() == 0:
             CTkMessagebox(title="Ошибка", message="Вы не ввели фильтр для поиска", icon="cancel")
             return
 
         for search_filter in search_filters:
-            general_result.append(self.parser.search(search_filter))
+            temp_results: List[Recording] = []
+            parser_results = self.parser.search(search_filter)
+            if parser_results.__len__() == 0:
+                not_founded_filters.append(search_filter)
+            else:
+                for item in self.parser.search(search_filter):
+                    temp_results.append(Recording(item))
 
-        if ''.join(sum(general_result, [])).__len__() == 0:
-            self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(search_filters)}")
-            return
+                formatted_results.append(temp_results)
 
+        search_filters = [x for x in search_filters if x not in not_founded_filters]
         generator = Generator(self.info_label)
-        generator.generate(general_result, search_filters, self.general_file_flag)
+        generator.generate(formatted_results, search_filters, self.general_file_flag)
+
+        if not_founded_filters.__len__() != 0:
+            self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(not_founded_filters)}")
 
 
 if __name__ == '__main__':

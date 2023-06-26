@@ -1,9 +1,13 @@
 from docx import Document
 from docx.shared import Pt
 from typing import List
-from utils import roman_to_int, join_split_string, sort_key
 from customtkinter import CTkLabel
-import re
+from recording import Recording
+
+
+def sort_key(record: Recording) -> tuple:
+    split = record.get_record()[0][:5].split('.')
+    return split[1], split[0]
 
 
 class Generator:
@@ -22,39 +26,18 @@ class Generator:
 
         return doc
 
-    def __output_results(self, item: List[str], doc: Document) -> None:
-        item.sort(key=sort_key)
+    @staticmethod
+    def __output_results(items: List[Recording], doc: Document) -> None:
+        items.sort(key=sort_key)
 
-        for key, result in enumerate(item):
-            temp_str = [result[:5], result[6:]]
-
-            if re.search("пара", temp_str[1]):
-                split_string = temp_str[1].split()
-                split_string[0] = roman_to_int(split_string[0])
-                split_string[0], split_string[2] = split_string[2], split_string[0]
-                split_string[1], split_string[2] = split_string[2], split_string[1]
-                split_string[1] = "(" + split_string[1]
-                split_string[2] += ")"
-                split_string[0] = split_string[0].replace(".", ":")
-                item[key] = join_split_string(temp_str, split_string)
-            if re.search(self.time_interval_regex, temp_str[1]):
-                split_string = temp_str[1].split()
-                split_string[0] = split_string[0].split("-")[0]
-                item[key] = join_split_string(temp_str, split_string)
-            if re.search(self.time_interval_regex, temp_str[1]) is None and re.search(self.time_regex, temp_str[1]):
-                split_string = re.split(self.time_regex, temp_str[1])
-                split_string[0], split_string[1] = split_string[1], split_string[0]
-                split_string[0] = split_string[0].replace(".", ":")
-                item[key] = join_split_string(temp_str, split_string)
-
-        for result_string in item:
-            split_string = result_string.split()
+        for result_item in items:
+            result_string = result_item.get_record()
             paragraph = doc.add_paragraph()
             paragraph.paragraph_format.line_spacing = 1
-            paragraph.add_run(' '.join(split_string[:2])).bold = True
-            paragraph.add_run(' ' + ' '.join(split_string[2:]))
+            paragraph.add_run(' '.join(result_string[:2])).bold = True
+            paragraph.add_run(' ' + ' '.join(result_string[2:]))
 
-    def generate(self, results: List[List[str]], search_filter: List[str], general_file: bool = False) -> None:
+    def generate(self, results: List[List[Recording]], search_filter: List[str], general_file: bool = False) -> None:
         self.info_label.configure(text="Генерация...")
 
         if general_file:
