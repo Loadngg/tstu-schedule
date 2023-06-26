@@ -31,7 +31,6 @@ class Application(customtkinter.CTk):
         self.search_filter.grid(row=0, column=1, padx=(0, 20), pady=20, sticky="ew")
         self.search_filter.bind('<Return>', lambda event: 'break')
         self.search_filter.configure(font=('', 16))
-        self.search_filter.insert("0.0", "Волков")
 
         self.info_label = customtkinter.CTkLabel(self.search_frame, text="Готовность", anchor="w")
         self.info_label.grid(row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="nw")
