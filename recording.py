@@ -56,24 +56,20 @@ class Recording:
         self.subject = self.temp_str
 
     def get_record(self, flags: str = "/d/t/p/g/s/a") -> List[str]:
+        flags_dict = {
+            "d": self.data,
+            "t": self.time,
+            "p": f"({self.pair_number} пара)",
+            "g": self.group,
+            "s": self.subject,
+            "a": self.auditorium
+        }
         result: List[str] = []
 
         for flag in ''.join(flags.split()).split("/")[1:]:
-            match flag:
-                case "d":
-                    result.append(self.data)
-                case "t":
-                    result.append(self.time)
-                case "p":
-                    if self.pair_number.__len__() != 0:
-                        result.append(f"({self.pair_number} пара)")
-                case "g":
-                    result.append(self.group)
-                case "s":
-                    result.append(self.subject)
-                case "a":
-                    result.append(self.auditorium)
-                case _:
-                    raise Exception(f"Введён неверный флаг /{flag}")
+            try:
+                result.append(flags_dict[flag])
+            except KeyError:
+                raise ValueError(f"fВведён неверный флаг /{flag}")
 
         return result
