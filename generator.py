@@ -1,53 +1,58 @@
 from docx import Document
 from docx.shared import Pt
 from typing import List
-from utils import roman_to_int, join_split_string, sort_key
-import re
+from customtkinter import CTkLabel
+from recording import Recording
+from utils import remove_extra_whitespaces
 
 
-def generate(results: List[str], search_filter: str) -> None:
-    print("---GENERATION START---")
+def sort_key(record: Recording) -> tuple:
+    split = record.get_record()[0][:5].split('.')
+    return split[1], split[0]
 
-    time_interval_regex = r"(\b[0-2]?[0-9].[0-5][0-9]\b-\b[0-2]?[0-9].[0-5][0-9]\b)"
-    time_regex = r"(\b[0-2]?[0-9].[0-5][0-9]\b)"
 
-    doc = Document()
+class Generator:
+    def __init__(self, info_label: CTkLabel) -> None:
+        self.info_label = info_label
+        self.time_interval_regex = r"(\b[0-2]?[0-9].[0-5][0-9]\b-\b[0-2]?[0-9].[0-5][0-9]\b)"
+        self.time_regex = r"(\b[0-2]?[0-9].[0-5][0-9]\b)"
 
-    style = doc.styles['Normal']
-    style.font.name = 'Times New Roman'
-    style.font.size = Pt(14)
+    @staticmethod
+    def __create_doc() -> Document:
+        doc = Document()
 
-    results.sort(key=sort_key)
+        style = doc.styles['Normal']
+        style.font.name = 'Times New Roman'
+        style.font.size = Pt(14)
 
-    for key, result in enumerate(results):
-        temp_str = [result[:5], result[6:]]
+        return doc
 
-        if re.search("пара", temp_str[1]):
-            split_string = temp_str[1].split()
-            split_string[0] = roman_to_int(split_string[0])
-            split_string[0], split_string[2] = split_string[2], split_string[0]
-            split_string[1], split_string[2] = split_string[2], split_string[1]
-            split_string[1] = "(" + split_string[1]
-            split_string[2] += ")"
-            split_string[0] = split_string[0].replace(".", ":")
-            results[key] = join_split_string(temp_str, split_string)
-        if re.search(time_interval_regex, temp_str[1]):
-            split_string = temp_str[1].split()
-            split_string[0] = split_string[0].split("-")[0]
-            results[key] = join_split_string(temp_str, split_string)
-        if re.search(time_interval_regex, temp_str[1]) is None and re.search(time_regex, temp_str[1]):
-            split_string = re.split(time_regex, temp_str[1])
-            split_string[0], split_string[1] = split_string[1], split_string[0]
-            split_string[0] = split_string[0].replace(".", ":")
-            results[key] = join_split_string(temp_str, split_string)
+    @staticmethod
+    def __output_results(items: List[Recording], doc: Document) -> None:
+        items.sort(key=sort_key)
 
-    for result in results:
-        split_string = result.split()
-        paragraph = doc.add_paragraph()
-        paragraph.paragraph_format.line_spacing = 1
-        paragraph.add_run(' '.join(split_string[:2])).bold = True
-        paragraph.add_run(' ' + ' '.join(split_string[2:]))
+        for result_item in items:
+            result_string = result_item.get_record()
+            paragraph = doc.add_paragraph()
+            paragraph.paragraph_format.line_spacing = 1
+            paragraph.add_run(remove_extra_whitespaces(' '.join(result_string[:2]))).bold = True
+            paragraph.add_run(' ' + remove_extra_whitespaces(' '.join(result_string[2:])))
 
-    doc.save(f"Расписание {search_filter}.docx")
+    def generate(self, results: List[List[Recording]], search_filter: List[str], general_file: bool = False) -> None:
+        self.info_label.configure(text="Генерация...")
 
-    print("---GENERATION END---")
+        if general_file:
+            doc = self.__create_doc()
+
+            for item in results:
+                self.__output_results(item, doc)
+                doc.add_paragraph().paragraph_format.line_spacing = 1
+
+            doc.save(f"Расписание {' '.join(search_filter)}.docx")
+        else:
+            for item in results:
+                doc = self.__create_doc()
+                self.__output_results(item, doc)
+                doc.save(f"Расписание {search_filter[results.index(item)]}.docx")
+
+        self.info_label.configure(text="Генерация завершена")

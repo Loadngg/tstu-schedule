@@ -1,3 +1,4 @@
+import re
 import openpyxl
 from xls2xlsx import XLS2XLSX
 from typing import List
@@ -29,11 +30,9 @@ def roman_to_int(roman_str: str) -> str:
     return str(result)
 
 
-def sort_key(string: str):
-    split = string[:5].split('.')
-    return split[1], split[0]
+def find_in_list(regex_pattern: str, string: List[str]) -> str:
+    return ''.join(list(filter(re.compile(regex_pattern).match, string)))
 
 
-def join_split_string(temp_str: List[str], split_string: List[str]) -> str:
-    temp_str[1] = ' '.join(split_string)
-    return remove_extra_whitespaces(' '.join(temp_str))
+def remove_substring_from_string(regex_pattern: str, string: str) -> str:
+    return remove_extra_whitespaces(re.sub(f"{regex_pattern}", "", string))

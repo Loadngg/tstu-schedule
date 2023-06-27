@@ -2,14 +2,16 @@ from re import search
 from openpyxl import load_workbook
 from utils import *
 from typing import List
+from customtkinter import CTkLabel
 
 
 class Parser:
-    def __init__(self):
+    def __init__(self, info_label: CTkLabel) -> None:
         self.books: List[openpyxl.Workbook] = []
+        self.info_label = info_label
 
     def load_files(self, files: tuple) -> None:
-        print("---LOAD START---")
+        self.info_label.configure(text="Загрузка...")
 
         for item in files:
             print(item)
@@ -19,10 +21,12 @@ class Parser:
 
             self.books.append(book)
 
-        print("---LOAD END---")
+        self.info_label.configure(text="Загрузка завершена")
 
     def search(self, search_filter: str) -> List[str]:
-        print("---SEARCH START---")
+        self.info_label.configure(text="Обработка...")
+
+        filter_regex = rf"\b{search_filter}\b"
 
         result: List[str] = []
 
@@ -34,7 +38,7 @@ class Parser:
 
                 for cellObj in sheet[1:sheet.max_row]:
                     for cell in cellObj:
-                        if cell.value is not None and str(cell.value) != '' and search(search_filter, str(cell.value)):
+                        if cell.value is not None and str(cell.value) != '' and search(filter_regex, str(cell.value)):
                             row_index = cell.row
 
                             while sheet.cell(row=row_index, column=1).value is None:
@@ -59,6 +63,6 @@ class Parser:
 
             print(f"Book {self.books.index(book)} processed")
 
-        print("---SEARCH END---")
+        self.info_label.configure(text="Обработка завершена")
 
         return result
