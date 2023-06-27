@@ -26,6 +26,8 @@ class Parser:
     def search(self, search_filter: str) -> List[str]:
         self.info_label.configure(text="Обработка...")
 
+        filter_regex = rf"\b{search_filter}\b"
+
         result: List[str] = []
 
         for book in self.books:
@@ -36,7 +38,7 @@ class Parser:
 
                 for cellObj in sheet[1:sheet.max_row]:
                     for cell in cellObj:
-                        if cell.value is not None and str(cell.value) != '' and search(search_filter, str(cell.value)):
+                        if cell.value is not None and str(cell.value) != '' and search(filter_regex, str(cell.value)):
                             row_index = cell.row
 
                             while sheet.cell(row=row_index, column=1).value is None:

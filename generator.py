@@ -3,6 +3,7 @@ from docx.shared import Pt
 from typing import List
 from customtkinter import CTkLabel
 from recording import Recording
+from utils import remove_extra_whitespaces
 
 
 def sort_key(record: Recording) -> tuple:
@@ -34,8 +35,8 @@ class Generator:
             result_string = result_item.get_record()
             paragraph = doc.add_paragraph()
             paragraph.paragraph_format.line_spacing = 1
-            paragraph.add_run(' '.join(result_string[:2])).bold = True
-            paragraph.add_run(' ' + ' '.join(result_string[2:]))
+            paragraph.add_run(remove_extra_whitespaces(' '.join(result_string[:2]))).bold = True
+            paragraph.add_run(' ' + remove_extra_whitespaces(' '.join(result_string[2:])))
 
     def generate(self, results: List[List[Recording]], search_filter: List[str], general_file: bool = False) -> None:
         self.info_label.configure(text="Генерация...")

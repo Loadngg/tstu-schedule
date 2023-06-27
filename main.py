@@ -14,11 +14,11 @@ class Application(customtkinter.CTk):
         super().__init__()
 
         self.title("Парсинг расписания")
-        self.geometry(f"{500}x{250}")
+        self.geometry(f"{500}x{350}")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.search_frame = customtkinter.CTkFrame(self, width=140, height=100, corner_radius=0)
+        self.search_frame = customtkinter.CTkFrame(self, width=140, height=150, corner_radius=0)
         self.search_frame.grid(row=0, column=0, sticky="nsew")
         self.search_frame.grid_columnconfigure(1, weight=1)
         self.search_frame.grid_rowconfigure(1, weight=1)
@@ -34,7 +34,7 @@ class Application(customtkinter.CTk):
 
         self.info_label = customtkinter.CTkLabel(self.search_frame, text="Готовность", anchor="w")
         self.info_label.grid(row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="nw")
-        self.info_label.configure(font=('', 12))
+        self.info_label.configure(font=('', 12), justify="left", compound="left")
 
         self.general_file_checkbox = customtkinter.CTkCheckBox(self, text="Вывод в общий файл",
                                                                command=self.set_general_file_flag)
@@ -87,7 +87,8 @@ class Application(customtkinter.CTk):
         generator.generate(formatted_results, search_filters, self.general_file_flag)
 
         if not_founded_filters.__len__() != 0:
-            self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(not_founded_filters)}")
+            self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(not_founded_filters)}\n"
+                                           f"{self.info_label.cget('text')}")
 
 
 if __name__ == '__main__':
