@@ -10,7 +10,10 @@ class Parser:
         self.books: List[openpyxl.Workbook] = []
         self.info_label = info_label
 
-    def load_files(self, files: tuple) -> None:
+    def clear_books(self) -> None:
+        self.books.clear()
+
+    def load_files(self, files: tuple) -> List[openpyxl.Workbook]:
         self.info_label.configure(text="Загрузка...")
 
         for item in files:
@@ -22,6 +25,8 @@ class Parser:
             print(f"Loaded {item}")
 
         self.info_label.configure(text="Загрузка завершена")
+
+        return self.books
 
     def search(self, search_filter: str) -> List[str]:
         self.info_label.configure(text="Обработка...")

@@ -47,8 +47,17 @@ class Application(customtkinter.CTk):
                                                      state="disabled")
         self.search_button.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
 
+        self.clear_files_button = customtkinter.CTkButton(self, text="Очистить файлы",
+                                                          command=self.clear_files_button_event, state="disabled")
+        self.clear_files_button.grid(row=4, column=0, padx=20, pady=10, sticky="nsew")
+
         self.parser = Parser(self.info_label)
         self.general_file_flag: bool = False
+
+    def clear_files_button_event(self) -> None:
+        self.parser.clear_books()
+        self.info_label.configure(text="Файлы успешно удалены")
+        self.clear_files_button.configure(state="disabled")
 
     def set_general_file_flag(self) -> None:
         self.general_file_flag = not self.general_file_flag
@@ -61,6 +70,7 @@ class Application(customtkinter.CTk):
         self.parser.load_files(files)
 
         self.search_button.configure(state="normal")
+        self.clear_files_button.configure(state="normal")
 
     def parse_button_event(self) -> None:
         search_filters = self.search_filter.get("0.0", "end").split("\n")[0].split(", ")
