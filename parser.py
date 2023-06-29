@@ -14,12 +14,12 @@ class Parser:
         self.info_label.configure(text="Загрузка...")
 
         for item in files:
-            print(item)
             book = open_xls_as_xlsx(item) \
                 if item[-5:].split('.')[1] == 'xls' \
                 else load_workbook(item)
 
             self.books.append(book)
+            print(f"Loaded {item}")
 
         self.info_label.configure(text="Загрузка завершена")
 

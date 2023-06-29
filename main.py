@@ -1,6 +1,6 @@
 import customtkinter
-from CTkMessagebox import CTkMessagebox
 import tkinter.filedialog as fd
+from CTkMessagebox import CTkMessagebox
 from generator import *
 from parser import *
 from recording import *
