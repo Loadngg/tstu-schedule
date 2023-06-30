@@ -14,7 +14,7 @@ class Application(customtkinter.CTk):
         super().__init__()
 
         self.title("Парсинг расписания")
-        self.geometry(f"{500}x{350}")
+        self.geometry(f"{500}x{400}")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -40,19 +40,23 @@ class Application(customtkinter.CTk):
                                                                command=self.set_general_file_flag)
         self.general_file_checkbox.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
 
+        self.group_checkbox = customtkinter.CTkCheckBox(self, text="Объединять группы", command=self.set_group_flag)
+        self.group_checkbox.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+
         self.load_button = customtkinter.CTkButton(self, text="Загрузить", command=self.load_button_event)
-        self.load_button.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+        self.load_button.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
 
         self.search_button = customtkinter.CTkButton(self, text="Поиск", command=self.parse_button_event,
                                                      state="disabled")
-        self.search_button.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
+        self.search_button.grid(row=4, column=0, padx=20, pady=10, sticky="nsew")
 
         self.clear_files_button = customtkinter.CTkButton(self, text="Очистить файлы",
                                                           command=self.clear_files_button_event, state="disabled")
-        self.clear_files_button.grid(row=4, column=0, padx=20, pady=10, sticky="nsew")
+        self.clear_files_button.grid(row=5, column=0, padx=20, pady=10, sticky="nsew")
 
         self.parser = Parser(self.info_label)
         self.general_file_flag: bool = False
+        self.group_flag: bool = False
 
     def clear_files_button_event(self) -> None:
         self.parser.clear_books()
@@ -61,6 +65,9 @@ class Application(customtkinter.CTk):
 
     def set_general_file_flag(self) -> None:
         self.general_file_flag = not self.general_file_flag
+
+    def set_group_flag(self) -> None:
+        self.group_flag = not self.group_flag
 
     def load_button_event(self) -> None:
         files = fd.askopenfilenames()
