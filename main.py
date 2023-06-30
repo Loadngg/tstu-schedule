@@ -101,7 +101,7 @@ class Application(customtkinter.CTk):
 
         search_filters = [x for x in search_filters if x not in not_founded_filters]
         generator = Generator(self.info_label)
-        generator.generate(formatted_results, search_filters, self.general_file_flag)
+        generator.generate(formatted_results, search_filters, self.general_file_flag, self.group_flag)
 
         if not_founded_filters.__len__() != 0:
             self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(not_founded_filters)}\n"
