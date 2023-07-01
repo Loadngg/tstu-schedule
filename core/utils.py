@@ -34,11 +34,6 @@ def find_in_list(regex_pattern: str, string: List[str], return_list: bool = Fals
     result = list(filter(re.compile(regex_pattern).match, string))
 
     return result if return_list else ''.join(result)
-    #
-    # if return_list:
-    #     return result
-    # else:
-    #     return ''.join(result)
 
 
 def remove_substring_from_string(regex_pattern: str, string: str) -> str:
