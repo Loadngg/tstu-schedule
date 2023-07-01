@@ -61,6 +61,7 @@ class Application(customtkinter.CTk):
     def clear_files_button_event(self) -> None:
         self.parser.clear_books()
         self.info_label.configure(text="Файлы успешно удалены")
+        self.search_button.configure(state="disabled")
         self.clear_files_button.configure(state="disabled")
 
     def set_general_file_flag(self) -> None:

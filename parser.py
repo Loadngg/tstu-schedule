@@ -8,19 +8,24 @@ from customtkinter import CTkLabel
 class Parser:
     def __init__(self, info_label: CTkLabel) -> None:
         self.books: List[openpyxl.Workbook] = []
+        self.books_path: List[str] = []
         self.info_label = info_label
 
     def clear_books(self) -> None:
         self.books.clear()
+        self.books_path.clear()
 
     def load_files(self, files: tuple) -> List[openpyxl.Workbook]:
         self.info_label.configure(text="Загрузка...")
 
         for item in files:
+            if item in self.books_path:
+                continue
             book = open_xls_as_xlsx(item) \
                 if item[-5:].split('.')[1] == 'xls' \
                 else load_workbook(item)
 
+            self.books_path.append(item)
             self.books.append(book)
             print(f"Loaded {item}")
 

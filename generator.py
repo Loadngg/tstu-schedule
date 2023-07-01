@@ -34,10 +34,20 @@ class Generator:
             return split_data[1], split_data[0]
 
     def __output_results(self, items: List[Recording], doc: Document) -> None:
+        latest_group: str = ""
         items.sort(key=self.sort_key)
 
         for result_item in items:
             result_string = result_item.get_record()
+            group = result_string[3]
+
+            if latest_group != group:
+                if latest_group != "":
+                    doc.add_paragraph()
+                paragraph = doc.add_paragraph(group)
+                paragraph.paragraph_format.line_spacing = 1.5
+                latest_group = group
+
             paragraph = doc.add_paragraph()
             paragraph.paragraph_format.line_spacing = 1
             paragraph.add_run(remove_extra_whitespaces(' '.join(result_string[:2]))).bold = True

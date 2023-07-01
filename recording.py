@@ -55,6 +55,9 @@ class Recording:
         self.group = self.__find_field_by_index(0)
         self.subject = self.temp_str
 
+        split_group = re.split(r"([0-9]+)", self.group.upper().replace("-", ""))
+        self.group = f"{split_group[0]}-{split_group[1]}{split_group[2].lower()}"
+
     def get_record(self, flags: str = "/d/t/p/g/s/a") -> List[str]:
         flags_dict = {
             "d": self.data,
