@@ -1,9 +1,13 @@
+import re
 import customtkinter
 import tkinter.filedialog as fd
 from CTkMessagebox import CTkMessagebox
-from generator import *
-from parser import *
-from recording import *
+from typing import List
+
+from core.generator import Generator
+from core.parser import Parser
+from core.recording import Recording
+from core.utils import find_in_list
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
@@ -81,7 +85,9 @@ class Application(customtkinter.CTk):
         self.clear_files_button.configure(state="normal")
 
     def parse_button_event(self) -> None:
-        search_filters = self.search_filter.get("0.0", "end").split("\n")[0].split(", ")
+        split_filters = re.split(r"([a-zA-Zа-яА-ЯёЁ]+)", self.search_filter.get("0.0", "end"))
+        search_filters = find_in_list(r"([a-zA-Zа-яА-ЯёЁ]+)", split_filters, return_list=True)
+
         formatted_results: List[List[Recording]] = []
         not_founded_filters: List[str] = []
 

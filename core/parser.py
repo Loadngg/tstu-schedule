@@ -1,8 +1,10 @@
+import openpyxl
 from re import search
 from openpyxl import load_workbook
-from utils import *
 from typing import List
 from customtkinter import CTkLabel
+
+from core.utils import remove_extra_whitespaces, open_xls_as_xlsx
 
 
 class Parser:
@@ -29,7 +31,7 @@ class Parser:
             self.books.append(book)
             print(f"Loaded {item}")
 
-        self.info_label.configure(text="Загрузка завершена")
+        self.info_label.configure(text=f"Успешно загружено файлов: {self.books.__len__()}")
 
         return self.books
 

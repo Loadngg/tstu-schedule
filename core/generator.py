@@ -2,8 +2,9 @@ from docx import Document
 from docx.shared import Pt
 from typing import List
 from customtkinter import CTkLabel
-from recording import Recording
-from utils import remove_extra_whitespaces
+
+from core.recording import Recording
+from core.utils import remove_extra_whitespaces
 
 
 class Generator:
@@ -41,7 +42,7 @@ class Generator:
             result_string = result_item.get_record()
             group = result_string[3]
 
-            if latest_group != group:
+            if self.group and latest_group != group:
                 if latest_group != "":
                     doc.add_paragraph()
                 paragraph = doc.add_paragraph(group)
@@ -66,10 +67,12 @@ class Generator:
                 doc.add_paragraph().paragraph_format.line_spacing = 1
 
             doc.save(f"Расписание {' '.join(search_filter)}.docx")
+
+            self.info_label.configure(text="Генерация завершена. Сгенерирован один общий файл")
         else:
             for item in results:
                 doc = self.__create_doc()
                 self.__output_results(item, doc)
                 doc.save(f"Расписание {search_filter[results.index(item)]}.docx")
 
-        self.info_label.configure(text="Генерация завершена")
+            self.info_label.configure(text=f"Генерация завершена. Сгенерировано файлов: {results.__len__()}")

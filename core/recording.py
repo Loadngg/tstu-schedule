@@ -1,6 +1,7 @@
-from typing import List
-from utils import find_in_list, remove_substring_from_string, roman_to_int
 import re
+from typing import List
+
+from core.utils import find_in_list, remove_substring_from_string, roman_to_int
 
 
 class Recording:
@@ -56,7 +57,7 @@ class Recording:
         self.subject = self.temp_str
 
         split_group = re.split(r"([0-9]+)", self.group.upper().replace("-", ""))
-        self.group = f"{split_group[0]}-{split_group[1]}{split_group[2].lower()}"
+        self.group = f"{split_group[0]}{split_group[1]}{split_group[2].lower()}"
 
     def get_record(self, flags: str = "/d/t/p/g/s/a") -> List[str]:
         flags_dict = {
