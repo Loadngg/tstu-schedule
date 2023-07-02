@@ -26,11 +26,10 @@ class Generator:
         return doc
 
     def sort_key(self, record: Recording) -> tuple:
-        record_list = record.get_record()
-        split_data = record_list[0][:5].split('.')
+        split_data = record.data.split('.')
 
         if self.group:
-            return record_list[3], split_data[1], split_data[0]
+            return record.group, split_data[1], split_data[0]
         else:
             return split_data[1], split_data[0]
 
@@ -40,14 +39,13 @@ class Generator:
 
         for result_item in items:
             result_string = result_item.get_record()
-            group = result_string[3]
 
-            if self.group and latest_group != group:
+            if self.group and latest_group != result_item.group:
                 if latest_group != "":
                     doc.add_paragraph()
-                paragraph = doc.add_paragraph(group)
+                paragraph = doc.add_paragraph(result_item.group)
                 paragraph.paragraph_format.line_spacing = 1.5
-                latest_group = group
+                latest_group = result_item.group
 
             paragraph = doc.add_paragraph()
             paragraph.paragraph_format.line_spacing = 1
@@ -62,9 +60,9 @@ class Generator:
         if general_file:
             doc = self.__create_doc()
 
-            for item in results:
-                self.__output_results(item, doc)
-                doc.add_paragraph().paragraph_format.line_spacing = 1
+            general_results = sum(results, [])
+            self.__output_results(general_results, doc)
+            doc.add_paragraph().paragraph_format.line_spacing = 1
 
             doc.save(f"Расписание {' '.join(search_filter)}.docx")
 

@@ -23,7 +23,7 @@ class Recording:
 
     def __find_field_by_regex(self, regex: str) -> str:
         split_string = re.split(regex, self.temp_str)
-        field = find_in_list(regex, split_string)
+        field = "".join(find_in_list(regex, split_string))
         self.temp_str = remove_substring_from_string(field, self.temp_str)
         return field
 

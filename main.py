@@ -86,12 +86,12 @@ class Application(customtkinter.CTk):
 
     def parse_button_event(self) -> None:
         split_filters = re.split(r"([a-zA-Zа-яА-ЯёЁ]+)", self.search_filter.get("0.0", "end"))
-        search_filters = find_in_list(r"([a-zA-Zа-яА-ЯёЁ]+)", split_filters, return_list=True)
+        search_filters = find_in_list(r"([a-zA-Zа-яА-ЯёЁ]+)", split_filters)
 
         formatted_results: List[List[Recording]] = []
         not_founded_filters: List[str] = []
 
-        if search_filters[0].__len__() == 0:
+        if search_filters.__len__() == 0:
             CTkMessagebox(title="Ошибка", message="Вы не ввели фильтр для поиска", icon="cancel")
             return
 

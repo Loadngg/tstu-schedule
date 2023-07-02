@@ -30,10 +30,10 @@ def roman_to_int(roman_str: str) -> str:
     return str(result)
 
 
-def find_in_list(regex_pattern: str, string: List[str], return_list: bool = False) -> str | List:
+def find_in_list(regex_pattern: str, string: List[str]) -> List:
     result = list(filter(re.compile(regex_pattern).match, string))
 
-    return result if return_list else ''.join(result)
+    return result
 
 
 def remove_substring_from_string(regex_pattern: str, string: str) -> str:
