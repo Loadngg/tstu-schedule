@@ -1,6 +1,7 @@
-from typing import List
-from utils import find_in_list, remove_substring_from_string, roman_to_int
 import re
+from typing import List
+
+from core.utils import find_in_list, remove_substring_from_string, roman_to_int
 
 
 class Recording:
@@ -22,7 +23,7 @@ class Recording:
 
     def __find_field_by_regex(self, regex: str) -> str:
         split_string = re.split(regex, self.temp_str)
-        field = find_in_list(regex, split_string)
+        field = "".join(find_in_list(regex, split_string))
         self.temp_str = remove_substring_from_string(field, self.temp_str)
         return field
 
@@ -54,6 +55,9 @@ class Recording:
         self.auditorium = self.__find_field_by_index(-1)
         self.group = self.__find_field_by_index(0)
         self.subject = self.temp_str
+
+        split_group = re.split(r"([0-9]+)", self.group.upper().replace("-", ""))
+        self.group = f"{split_group[0]}{split_group[1]}{split_group[2].lower()}"
 
     def get_record(self, flags: str = "/d/t/p/g/s/a") -> List[str]:
         flags_dict = {

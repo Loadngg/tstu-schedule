@@ -1,27 +1,39 @@
+import openpyxl
 from re import search
 from openpyxl import load_workbook
-from utils import *
 from typing import List
 from customtkinter import CTkLabel
+
+from core.utils import remove_extra_whitespaces, open_xls_as_xlsx
 
 
 class Parser:
     def __init__(self, info_label: CTkLabel) -> None:
         self.books: List[openpyxl.Workbook] = []
+        self.books_path: List[str] = []
         self.info_label = info_label
 
-    def load_files(self, files: tuple) -> None:
+    def clear_books(self) -> None:
+        self.books.clear()
+        self.books_path.clear()
+
+    def load_files(self, files: tuple) -> List[openpyxl.Workbook]:
         self.info_label.configure(text="Загрузка...")
 
         for item in files:
-            print(item)
+            if item in self.books_path:
+                continue
             book = open_xls_as_xlsx(item) \
                 if item[-5:].split('.')[1] == 'xls' \
                 else load_workbook(item)
 
+            self.books_path.append(item)
             self.books.append(book)
+            print(f"Loaded {item}")
 
-        self.info_label.configure(text="Загрузка завершена")
+        self.info_label.configure(text=f"Успешно загружено файлов: {self.books.__len__()}")
+
+        return self.books
 
     def search(self, search_filter: str) -> List[str]:
         self.info_label.configure(text="Обработка...")

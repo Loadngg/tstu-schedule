@@ -1,9 +1,13 @@
+import re
 import customtkinter
-from CTkMessagebox import CTkMessagebox
 import tkinter.filedialog as fd
-from generator import *
-from parser import *
-from recording import *
+from CTkMessagebox import CTkMessagebox
+from typing import List
+
+from core.generator import Generator
+from core.parser import Parser
+from core.recording import Recording
+from core.utils import find_in_list
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
@@ -14,7 +18,7 @@ class Application(customtkinter.CTk):
         super().__init__()
 
         self.title("Парсинг расписания")
-        self.geometry(f"{500}x{350}")
+        self.geometry(f"{500}x{400}")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -40,18 +44,35 @@ class Application(customtkinter.CTk):
                                                                command=self.set_general_file_flag)
         self.general_file_checkbox.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
 
+        self.group_checkbox = customtkinter.CTkCheckBox(self, text="Объединять группы", command=self.set_group_flag)
+        self.group_checkbox.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+
         self.load_button = customtkinter.CTkButton(self, text="Загрузить", command=self.load_button_event)
-        self.load_button.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+        self.load_button.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
 
         self.search_button = customtkinter.CTkButton(self, text="Поиск", command=self.parse_button_event,
                                                      state="disabled")
-        self.search_button.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
+        self.search_button.grid(row=4, column=0, padx=20, pady=10, sticky="nsew")
+
+        self.clear_files_button = customtkinter.CTkButton(self, text="Очистить файлы",
+                                                          command=self.clear_files_button_event, state="disabled")
+        self.clear_files_button.grid(row=5, column=0, padx=20, pady=10, sticky="nsew")
 
         self.parser = Parser(self.info_label)
         self.general_file_flag: bool = False
+        self.group_flag: bool = False
+
+    def clear_files_button_event(self) -> None:
+        self.parser.clear_books()
+        self.info_label.configure(text="Файлы успешно удалены")
+        self.search_button.configure(state="disabled")
+        self.clear_files_button.configure(state="disabled")
 
     def set_general_file_flag(self) -> None:
         self.general_file_flag = not self.general_file_flag
+
+    def set_group_flag(self) -> None:
+        self.group_flag = not self.group_flag
 
     def load_button_event(self) -> None:
         files = fd.askopenfilenames()
@@ -61,13 +82,16 @@ class Application(customtkinter.CTk):
         self.parser.load_files(files)
 
         self.search_button.configure(state="normal")
+        self.clear_files_button.configure(state="normal")
 
     def parse_button_event(self) -> None:
-        search_filters = self.search_filter.get("0.0", "end").split("\n")[0].split(", ")
+        split_filters = re.split(r"([a-zA-Zа-яА-ЯёЁ]+)", self.search_filter.get("0.0", "end"))
+        search_filters = find_in_list(r"([a-zA-Zа-яА-ЯёЁ]+)", split_filters)
+
         formatted_results: List[List[Recording]] = []
         not_founded_filters: List[str] = []
 
-        if search_filters[0].__len__() == 0:
+        if search_filters.__len__() == 0:
             CTkMessagebox(title="Ошибка", message="Вы не ввели фильтр для поиска", icon="cancel")
             return
 
@@ -84,7 +108,7 @@ class Application(customtkinter.CTk):
 
         search_filters = [x for x in search_filters if x not in not_founded_filters]
         generator = Generator(self.info_label)
-        generator.generate(formatted_results, search_filters, self.general_file_flag)
+        generator.generate(formatted_results, search_filters, self.general_file_flag, self.group_flag)
 
         if not_founded_filters.__len__() != 0:
             self.info_label.configure(text=f"Не найдено записей для преподавателей: {', '.join(not_founded_filters)}\n"
