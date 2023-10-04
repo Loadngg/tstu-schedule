@@ -56,17 +56,22 @@ class Parser:
                             while sheet.cell(row=row_index, column=1).value is None:
                                 row_index -= 1
 
+                            time_with_pare = True if sheet.cell(row=cell.row + 1, column=2).value is None else False
+
                             result.append(
                                 ' '.join(
                                     [
                                         remove_extra_whitespaces(sheet.cell(row=row_index, column=1).value)[:5],
-                                        ' '.join(
-                                            [
-                                                remove_extra_whitespaces(sheet.cell(row=cell.row, column=2).value),
-                                                remove_extra_whitespaces(
-                                                    sheet.cell(row=cell.row + 1, column=2).value)
-                                            ]
-                                        ) if time_column_exist else '',
+                                        remove_extra_whitespaces(
+                                            ' '.join(
+                                                [
+                                                    remove_extra_whitespaces(
+                                                        sheet.cell(row=cell.row, column=2).value).replace(',', ''),
+                                                    '' if time_with_pare else remove_extra_whitespaces(
+                                                        sheet.cell(row=cell.row + 1, column=2).value)
+                                                ]
+                                            ) if time_column_exist else ''
+                                        ),
                                         remove_extra_whitespaces(sheet.cell(row=1, column=cell.column).value),
                                         remove_extra_whitespaces(cell.value),
                                     ]
