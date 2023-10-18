@@ -1,8 +1,11 @@
 import re
 import sys
+import threading
 
 from typing import List
+from threading import Thread, Event
 
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 
 from core.generator import Generator
@@ -15,6 +18,8 @@ from design.design import Ui_MainWindow
 class MainWindow(QMainWindow, Ui_MainWindow):
     general_file_flag: bool = False
     group_flag: bool = False
+    load_books_thread: Thread = None
+    stop_event: Event = None
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -55,7 +60,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             dialog.setViewMode(QFileDialog.Detail)
 
             if dialog.exec_():
-                self.parser.load_files(dialog.selectedFiles())
+                self.stop_event = Event()
+                self.load_books_thread = Thread(target=self.parser.load_files,
+                                                args=(dialog.selectedFiles(), self.stop_event))
+                self.load_books_thread.start()
 
                 self.searchButton.setEnabled(True)
                 self.clearFilesButton.setEnabled(True)
@@ -91,6 +99,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not_founded_filters.__len__() != 0:
             self.infoLabel.setText(f"Не найдено записей для преподавателей: {', '.join(not_founded_filters)}\n"
                                    f"{self.infoLabel.text()}")
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.stop_event.set()
+        event.accept()
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
+from threading import Event
+
 import openpyxl
 
 from re import search
@@ -21,10 +23,13 @@ class Parser:
         self.books.clear()
         self.books_path.clear()
 
-    def load_files(self, files: List[str]) -> List[openpyxl.Workbook]:
+    def load_files(self, files: List[str], stop_event: Event = None) -> List[openpyxl.Workbook]:
         info_output(self.info_label, "Загрузка...")
 
         for item in files:
+            if stop_event and stop_event.is_set():
+                break
+
             if item in self.books_path:
                 continue
             book = open_xls_as_xlsx(item) \
@@ -33,7 +38,7 @@ class Parser:
 
             self.books_path.append(item)
             self.books.append(book)
-            print(f"Loaded {item}")
+            info_output(self.info_label, f"Loaded {item}")
 
         info_output(self.info_label, f"Успешно загружено файлов: {self.books.__len__()}")
 
