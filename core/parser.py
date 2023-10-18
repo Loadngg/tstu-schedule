@@ -1,14 +1,15 @@
 import openpyxl
 from re import search
+
+from PyQt5.QtWidgets import QLabel
 from openpyxl import load_workbook
 from typing import List
-from customtkinter import CTkLabel
 
-from core.utils import remove_extra_whitespaces, open_xls_as_xlsx
+from core.utils import remove_extra_whitespaces, open_xls_as_xlsx, info_output
 
 
 class Parser:
-    def __init__(self, info_label: CTkLabel) -> None:
+    def __init__(self, info_label: QLabel = None) -> None:
         self.books: List[openpyxl.Workbook] = []
         self.books_path: List[str] = []
         self.info_label = info_label
@@ -17,8 +18,8 @@ class Parser:
         self.books.clear()
         self.books_path.clear()
 
-    def load_files(self, files: tuple) -> List[openpyxl.Workbook]:
-        self.info_label.configure(text="Загрузка...")
+    def load_files(self, files: List[str]) -> List[openpyxl.Workbook]:
+        info_output(self.info_label, "Загрузка...")
 
         for item in files:
             if item in self.books_path:
@@ -31,12 +32,12 @@ class Parser:
             self.books.append(book)
             print(f"Loaded {item}")
 
-        self.info_label.configure(text=f"Успешно загружено файлов: {self.books.__len__()}")
+        info_output(self.info_label, f"Успешно загружено файлов: {self.books.__len__()}")
 
         return self.books
 
     def search(self, search_filter: str) -> List[str]:
-        self.info_label.configure(text="Обработка...")
+        info_output(self.info_label, "Обработка...")
 
         filter_regex = rf"\b{search_filter}\b"
 
@@ -80,6 +81,6 @@ class Parser:
 
             print(f"Book {self.books.index(book)} processed")
 
-        self.info_label.configure(text="Обработка завершена")
+        info_output(self.info_label, "Обработка завершена")
 
         return result

@@ -1,5 +1,35 @@
-/venv/
+# IDE systwm files
+/.idea
+/.vscode
+
+# Python internal
+/venv*
+__pycache__/
+
+# Local app config, env, make and data
+/config.json
+/**/data/
+/**/.env
+/Makefile
 /excel/
-/.idea/
 *.docx
-\.~*
+
+# Log files
+/**/log/
+/**/log-*/
+/**/*.csv
+/**/*.edf
+
+# Cython compile output
+/build
+*.c
+*.so
+*.html
+!templates/*.html
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+# local temp files and utils
+/**/*.sh
+/designer

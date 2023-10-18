@@ -1,5 +1,6 @@
 import re
 import openpyxl
+from PyQt5.QtWidgets import QWidget, QMessageBox, QLabel
 from xls2xlsx import XLS2XLSX
 from typing import List
 
@@ -38,3 +39,15 @@ def find_in_list(regex_pattern: str, string: List[str]) -> List:
 
 def remove_substring_from_string(regex_pattern: str, string: str) -> str:
     return remove_extra_whitespaces(re.sub(f"{regex_pattern}", "", string))
+
+
+def show_message(parent: QWidget, message: str, message_type: str, icon: int) -> None:
+    msg = QMessageBox(parent)
+    msg.setIcon(icon)
+    msg.setWindowTitle(message_type)
+    msg.setText(message)
+    msg.exec_()
+
+
+def info_output(label: QLabel, message: str) -> None:
+    label.setText(message) if label else print(str)
