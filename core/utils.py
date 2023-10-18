@@ -50,4 +50,4 @@ def show_message(parent: QWidget, message: str, message_type: str, icon: int) ->
 
 
 def info_output(label: QLabel, message: str) -> None:
-    label.setText(message) if label else print(str)
+    label.setText(message) if label else print(message)

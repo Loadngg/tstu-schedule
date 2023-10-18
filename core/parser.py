@@ -1,9 +1,12 @@
 import openpyxl
+
 from re import search
+from typing import List
 
 from PyQt5.QtWidgets import QLabel
 from openpyxl import load_workbook
-from typing import List
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 from core.utils import remove_extra_whitespaces, open_xls_as_xlsx, info_output
 
@@ -39,8 +42,6 @@ class Parser:
     def search(self, search_filter: str) -> List[str]:
         info_output(self.info_label, "Обработка...")
 
-        filter_regex = rf"\b{search_filter}\b"
-
         result: List[str] = []
 
         for book in self.books:
@@ -51,7 +52,8 @@ class Parser:
 
                 for cellObj in sheet[1:sheet.max_row]:
                     for cell in cellObj:
-                        if cell.value is not None and str(cell.value) != '' and search(filter_regex, str(cell.value)):
+                        if (cell.value is not None and str(cell.value) != '' and
+                                fuzz.WRatio(search_filter.lower(), str(cell.value).lower()) >= 75):
                             row_index = cell.row
 
                             while sheet.cell(row=row_index, column=1).value is None:
