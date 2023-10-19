@@ -53,6 +53,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.group_flag = not self.group_flag
 
     def load_button_event(self) -> None:
+        def load_books_thread_watcher(thread: Thread) -> None:
+            thread.join()
+            self.loadButton.setEnabled(True)
+            self.searchButton.setEnabled(True)
+            self.clearFilesButton.setEnabled(True)
+
         try:
             dialog = QFileDialog(self)
             dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
@@ -64,9 +70,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.load_books_thread = Thread(target=self.parser.load_files,
                                                 args=(dialog.selectedFiles(), self.stop_event))
                 self.load_books_thread.start()
+                self.loadButton.setEnabled(False)
 
-                self.searchButton.setEnabled(True)
-                self.clearFilesButton.setEnabled(True)
+                Thread(target=load_books_thread_watcher, args=(self.load_books_thread,)).start()
         except Exception:
             show_message(self, "Непредвиденная ошибка при загрузке файлов", "Ошибка", QMessageBox.Warning)
 

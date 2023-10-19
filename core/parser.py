@@ -38,7 +38,7 @@ class Parser:
 
             self.books_path.append(item)
             self.books.append(book)
-            info_output(self.info_label, f"Loaded {item}")
+            info_output(self.info_label, f"Загружен: {item.split('/')[-1]}")
 
         info_output(self.info_label, f"Успешно загружено файлов: {self.books.__len__()}")
 
